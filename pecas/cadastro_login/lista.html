@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lista de Peças</title>
+<!-- Adicione o SDK do Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js"></script>
+</head>
+<body>
+
+<h1>Lista de Peças</h1>
+
+<button id="buscar">Buscar</button>
+
+<ul id="lista-pecas">
+    <!-- Os dados serão adicionados aqui -->
+</ul>
+
+<script>
+// Configuração do Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyCjaQCG210hmK74C2_XImjQ1p7p8RYRCWM",
+    authDomain: "peca-4e2b2.firebaseapp.com",
+    projectId: "peca-4e2b2",
+};
+
+// Inicialize o Firebase
+firebase.initializeApp(firebaseConfig);
+
+// Referência ao Firestore
+const db = firebase.firestore();
+
+// Função para carregar os dados do Firestore e mostrar na lista
+function carregarDados() {
+    // Limpa a lista antes de adicionar novos itens
+    document.getElementById('lista-pecas').innerHTML = '';
+
+    // Recupera os dados do Firestore
+    db.collection("pecas").get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            const dados = doc.data();
+            const descricao = dados.descricao;
+            const imagem = dados.img;
+            const nome = dados.nome;
+            const preco = dados.preco;
+            const quantidade = dados.quantidade;
+            const timestamp = dados.timestamp;
+
+            // Cria um item de lista e adiciona na lista HTML
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <img src="${imagem}" alt="${nome}" style="width: 100px; height: auto;">
+                <p><strong>Nome:</strong> ${nome}</p>
+                <p><strong>Descrição:</strong> ${descricao}</p>
+                <p><strong>Preço:</strong> ${preco}</p>
+                <p><strong>Quantidade:</strong> ${quantidade}</p>
+                <p><strong>Timestamp:</strong> ${timestamp}</p>
+            `;
+            document.getElementById('lista-pecas').appendChild(li);
+        });
+    }).catch((error) => {
+        console.error("Erro ao carregar dados: ", error);
+    });
+}
+
+// Adiciona um ouvinte de evento ao botão para carregar os dados quando clicado
+document.getElementById('buscar').addEventListener('click', carregarDados);
+
+</script>
+
+</body>
+</html>
